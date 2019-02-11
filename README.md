@@ -115,3 +115,4 @@ maven
                 (maxValue - minValue) + 0).toFloat()
     }
 ```
+![Alt Text](https://github.com/gokul42252/BatteryRamUsageWidget/blob/master/2tdp1t.gif)
