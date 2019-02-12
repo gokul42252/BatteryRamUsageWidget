@@ -7,11 +7,10 @@ import com.ct.respurceusageview.CircularLoadProgressView
 
 class MainActivity : AppCompatActivity() {
 
-    var i = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        var i = 0
         val cicView = findViewById<CircularLoadProgressView>(R.id.circle_progress_bar)
         val ha = Handler()
         ha.postDelayed(object : Runnable {
@@ -39,6 +38,7 @@ class MainActivity : AppCompatActivity() {
 
     /**
      * Method to calculate the scaled value
+     *
      */
     fun calculateScaledValue(
         minValue: Long,

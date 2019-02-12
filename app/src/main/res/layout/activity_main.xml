@@ -20,13 +20,13 @@
             android:layout_height="wrap_content"
             app:lcv_base_arc_color="@color/colorPrimaryVeryLight"
             app:lcv_label_fontName="SansationRegular.ttf"
-            app:lcv_arc_width="30dp"
+            app:lcv_arc_width="50dp"
             app:lcv_progress_arc_color="@color/colorGraphRed"
             app:lcv_progress_label_str="50%"
             app:lcv_progress_label_text_color="@color/colorPrimaryVeryLight"
             app:lcv_progress_label_text_size="40sp"
             app:lcv_progress_value_text_color="@color/colorWhite"
-            app:lcv_progress_value_text_size="100sp"
+            app:lcv_progress_value_text_size="50sp"
             tools:ignore="MissingConstraints"/>
 
 </android.support.constraint.ConstraintLayout>

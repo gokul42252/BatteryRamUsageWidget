@@ -3,17 +3,15 @@ package com.ct.respurceusageview
 /**
  * Created by Gokul on 1/8/2018.
  * CircularProgressView
+ *
  */
 
 
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.TypedArray
-import android.graphics.Canvas
-import android.graphics.Paint
+import android.graphics.*
 import android.graphics.Paint.Style
-import android.graphics.RectF
-import android.graphics.Typeface
 import android.support.v4.view.InputDeviceCompat
 import android.text.TextPaint
 import android.util.AttributeSet
@@ -34,18 +32,29 @@ class CircularLoadProgressView : View {
     private var mProgressArcColor: Int = 0
     private var mProgressArcPaint: Paint? = null
     var progressArcSweepAngle: Float = 0.toFloat()
-
     private var mProgressLabelStr: String? = null
     private var mProgressTimeLabelStr: String? = null
     private var mProgressTimeTextLabelStr: String? = null
-
     private var mProgressLabelTextSize: Int = 0
     private var mProgressValueStr: String? = null
     private var mProgressValueTextColor: Int = 0
     private var mProgressValueTextPaint: TextPaint? = null
     private var mProgressValueTextSize: Int = 0
     private var mRotationAngle: Int = 0
-
+    private var pathEffects: ArrayList<PathEffect> = java.util.ArrayList()
+    private fun makeEffects() { // no effect
+        val phase = 5f
+        pathEffects.add(CornerPathEffect(10f))
+        pathEffects.add(DashPathEffect(floatArrayOf(5f, 5f, 5f, 5f), phase))
+        pathEffects.add(
+            PathDashPathEffect(
+                makePathDash(), 12f, phase,
+                PathDashPathEffect.Style.MORPH
+            )
+        )
+        pathEffects.add(ComposePathEffect(pathEffects[2], pathEffects[1]))
+        pathEffects.add(ComposePathEffect(pathEffects[3], pathEffects[1]))
+    }
     constructor(context: Context)
             : super(context) {
         this.mRotationAngle = -90
@@ -63,9 +72,32 @@ class CircularLoadProgressView : View {
         this.mProgressLabelStr = "Progress"
         this.mProgressTimeLabelStr = "Put your data here"
         this.mProgressTimeTextLabelStr = "0:00:00"
+        makeEffects()
         initialization(context, null, 0)
     }
 
+    private fun makeFollowPath(): Path {
+        val p = Path()
+        p.moveTo(0F, 0F)
+        for (i in 1..15) {
+            p.lineTo((i * 20).toFloat(), Math.random().toFloat() * 35)
+        }
+        return p
+    }
+
+    private fun makePathDash(): Path {
+        val p = Path()
+        p.moveTo(-6F, 4F)
+        p.lineTo(6F, 4F)
+        p.lineTo(6F, 3F)
+        p.lineTo(-6F, 3F)
+        p.close()
+        p.moveTo(-6F, -4F)
+        p.lineTo(6F, -4F)
+        p.lineTo(6F, -3F)
+        p.lineTo(-6F, -3F)
+        return p
+    }
     constructor(context: Context, attrs: AttributeSet)
             : super(context, attrs) {
         this.mRotationAngle = -90
@@ -76,7 +108,6 @@ class CircularLoadProgressView : View {
         this.mArcRect = RectF()
         this.mBaseArcColor = -16776961
         this.mProgressArcColor = InputDeviceCompat.SOURCE_ANY
-
         this.mProgressValueTextColor = -1
         this.mProgressLabelTextSize = 50
         this.mProgressValueTextSize = 125
@@ -84,6 +115,7 @@ class CircularLoadProgressView : View {
         this.mProgressLabelStr = "Progress"
         this.mProgressTimeLabelStr = "Time Elapsed"
         this.mProgressTimeTextLabelStr = "0:00:00"
+        makeEffects()
         initialization(context, attrs, 0)
     }
 
@@ -97,7 +129,6 @@ class CircularLoadProgressView : View {
         this.mArcRect = RectF()
         this.mBaseArcColor = -16776961
         this.mProgressArcColor = InputDeviceCompat.SOURCE_ANY
-
         this.mProgressValueTextColor = -1
         this.mProgressLabelTextSize = 50
         this.mProgressValueTextSize = 125
@@ -105,11 +136,13 @@ class CircularLoadProgressView : View {
         this.mProgressLabelStr = ""
         this.mProgressTimeLabelStr = ""
         this.mProgressTimeTextLabelStr = ""
+        makeEffects()
         initialization(context, attrs, defStyle)
     }
 
     @SuppressLint("CustomViewStyleable")
     private fun initialization(context: Context, attrs: AttributeSet?, defStyle: Int) {
+
         this.mContext = context
         var typedArray: TypedArray? = null
         if (attrs != null) {
@@ -127,10 +160,12 @@ class CircularLoadProgressView : View {
                 R.styleable.CircularProgress_lcv_progress_label_text_size,
                 this.mProgressLabelTextSize.toFloat()
             ).toInt()
+
             this.mProgressValueTextSize = typedArray.getDimension(
                 R.styleable.CircularProgress_lcv_progress_value_text_size,
                 this.mProgressValueTextSize.toFloat()
             ).toInt()
+
             this.mArcWidth =
                 typedArray.getDimension(R.styleable.CircularProgress_lcv_arc_width, this.mArcWidth.toFloat()).toInt()
             this.mProgressLabelStr = typedArray.getString(R.styleable.CircularProgress_lcv_progress_label_str)
@@ -142,6 +177,7 @@ class CircularLoadProgressView : View {
                     this.mTypeface = typeface
                 }
             }
+
             if (fontNameLabel != null) {
                 val typeface = Typeface.createFromAsset(mContext!!.assets, fontNameLabel)
                 if (typeface != null) {
@@ -159,8 +195,6 @@ class CircularLoadProgressView : View {
         this.mProgressValueTextPaint!!.color = this.mProgressValueTextColor
         this.mProgressValueTextPaint!!.textSize = this.mProgressValueTextSize.toFloat()
         this.mProgressValueTextPaint!!.isAntiAlias = true
-
-
         this.mBaseArcPaint = Paint()
         this.mBaseArcPaint!!.color = this.mBaseArcColor
         this.mBaseArcPaint!!.isAntiAlias = true
@@ -171,8 +205,8 @@ class CircularLoadProgressView : View {
         this.mProgressArcPaint!!.isAntiAlias = true
         this.mProgressArcPaint!!.style = Style.STROKE
         this.mProgressArcPaint!!.strokeWidth = this.mArcWidth.toFloat()
+        this.mProgressArcPaint!!.pathEffect = pathEffects[1]
         this.mProgressArcPaint!!.setShadowLayer(this.mArcWidth.toFloat(), 0.0f, 0.0f, this.mProgressArcColor)
-
         setLayerType(1, this.mProgressArcPaint)
         typedArray?.recycle()
     }

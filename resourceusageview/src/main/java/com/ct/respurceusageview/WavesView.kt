@@ -6,35 +6,35 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Paint.ANTI_ALIAS_FLAG
 import android.graphics.PointF
+import android.os.Build
 import android.util.AttributeSet
 import android.view.View
 import android.view.animation.LinearInterpolator
 
 class WavesView
 @JvmOverloads
-constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = R.attr.wavesViewStyle
+constructor(context: Context,
+            attrs: AttributeSet? = null,
+            defStyleAttr: Int = R.attr.wavesViewStyle
 ) : View(context, attrs, defStyleAttr) {
-
     private val wavePaint: Paint
     private val waveGap: Float
-
     private var maxRadius = 0f
     private var center = PointF(0f, 0f)
     private var initialRadius = 0f
-
     private var waveAnimator: ValueAnimator? = null
     private var waveRadiusOffset = 0f
         set(value) {
             field = value
-            postInvalidateOnAnimation()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                postInvalidateOnAnimation()
+            }
         }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        waveAnimator = ValueAnimator.ofFloat(0f, waveGap).apply {
+        waveAnimator = ValueAnimator.ofFloat(0f, waveGap)
+            .apply {
             addUpdateListener {
                 waveRadiusOffset = it.animatedValue as Float
             }
@@ -51,6 +51,7 @@ constructor(
         super.onDetachedFromWindow()
     }
 
+
     init {
         val attrs = context.obtainStyledAttributes(attrs, R.styleable.WavesView, defStyleAttr, 0)
         //init paint with custom attrs
@@ -62,7 +63,6 @@ constructor(
         waveGap = attrs.getDimension(R.styleable.WavesView_waveGap, 20f)
         attrs.recycle()
     }
-
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         //set the center of all circles to be center of the view
