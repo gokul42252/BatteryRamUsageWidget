@@ -2,7 +2,7 @@
 Custom widget to show ram and battery usage in a circular progress
 
 
-![Alt Text](https://github.com/gokul42252/BatteryRamUsageWidget/blob/master/2tdp1t.gif)
+![Alt Text](https://github.com/gokul42252/BatteryRamUsageWidget/blob/master/usage.gif)
 
 
 ## How to use in your project
@@ -115,4 +115,4 @@ maven
                 (maxValue - minValue) + 0).toFloat()
     }
 ```
-![Alt Text](https://github.com/gokul42252/BatteryRamUsageWidget/blob/master/2tdp1t.gif)
+![Alt Text](https://github.com/gokul42252/BatteryRamUsageWidget/blob/master/usage.gif)
